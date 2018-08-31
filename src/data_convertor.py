@@ -10,9 +10,8 @@ Created on Wed Aug 29 23:59:43 2018
 # 10000 testing
 
 def convert(imgf, labelf, n):
-    curr_directory = '/home/raghuvansh/Desktop/DL/MNIST/data/ubyte/'
-    f = open(curr_directory + imgf, "rb")
-    l = open(curr_directory + labelf, "rb")
+    f = open(imgf, 'rb')
+    l = open(labelf, 'rb')
 
     f.read(16)
     l.read(8)
