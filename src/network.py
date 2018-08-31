@@ -8,6 +8,7 @@ Created on Sat Aug 25 19:03:48 2018
 
 import numpy as np
 from random import shuffle
+import pickle
 
 class Network(object):
     
@@ -17,12 +18,19 @@ class Network(object):
         self.biases = [np.random.randn(y,1) for y in sizes[1:]]
         self.weights = [np.random.randn(y,x) for x,y in zip(sizes[:-1], sizes[1:])]
         
-    def feed_forward(self, x):
+    def feedforward(self, x):
         a = x
+        zs = []
+        activations = []
         for w,b in zip(self.weights, self.biases):
-            a = sigmoid(np.dot(w,a) + b)
+            z = np.dot(w,a) + b
+            zs.append(z)
+            a = sigmoid(z)
+            activations.append(a)
             
-        return a
+        cache = (zs, activations)
+            
+        return (a, cache)
     
     def SGD(self, training_data, epochs, mini_batch_size, eta, test_data=None):
         if test_data: n_test = len(test_data)
@@ -52,6 +60,57 @@ class Network(object):
                         for w, nw in zip(self.weights, nabla_w)]
         self.biases = [b - (eta/len(mini_batch)) * nb
                        for b, nb in zip(self.biases, nabla_b)]
+    
+    def backprop(self, cache, y):
+        nabla_b = [np.zeros(b.shape) for b in self.biases]
+        nabla_w = [np.zeros(w.shape) for w in self.weights]
+        zs, activations = cache
+        delta = self.cost_derivative(activations[-1], y) * sigmoid_derivative(zs[-1])
+        nabla_b[-1] = delta
+        nabla_w[-1] = np.dot(delta, activations[-2].T)
+        for l in range(2, self.num_layers):
+            z = zs[-l]
+            sp = sigmoid_derivative(z)
+            delta = np.dot(self.weights[-l+1].T, delta) * sp
+            nabla_b[-l] = delta
+            nabla_w[-l] = np.dot(delta, activations[-l-1].T)
+            
+        return (nabla_b, nabla_w)
+        
+    def evaluate(self, test_data):
+        test_results = [(np.argmax(self.feedforward(x)), y) for (x,y) in test_data]
+        return sum(int(x == y) for (x,y) in test_results)
+    
+    def cost_derivative(self, output_activations, y):
+        return (output_activations - y)
+    
+    def predict(self, x):
+        forward_prop = self.feedforward(x)
+        vectorized_predictions_np = forward_prop[0]
+        predictions = []
+        for prediction in vectorized_predictions_np:
+            predictions.append(prediction.tolist().index(1))
+            
+        return predictions  
+    
+    def save_network(self):
+        matrix = (self.weights, self.biases)
+        pickle_out = open('/home/raghuvansh/Desktop/DL/MNIST/saved_network/network.pickle', 'wb')
+        pickle.dump(matrix, pickle_out)
+        pickle_out.close()
+        
+    def load_network(self):
+        try:
+            pickle_in = open('/home/raghuvansh/Desktop/DL/MNIST/saved_network/network.pickle', 'rb')
+        except FileNotFoundError:
+            print('no saved networks available')
+            return
+        
+        self.weights, self.biases = pickle.load(pickle_in)
+        pickle_in.close()
         
 def sigmoid(z):
     return (1.0 / (1.0 + np.exp(-z)))
+
+def sigmoid_derivative(z):
+    return sigmoid(z) * (1 - sigmoid(z))
