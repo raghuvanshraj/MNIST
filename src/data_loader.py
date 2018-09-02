@@ -11,7 +11,7 @@ import numpy as np
 class DataLoader(object):
     
     def __init__(self):
-        self.curr_directory = '/home/raghuvansh/Desktop/DL/MNIST/data/ubyte/'
+        self.curr_directory = '/home/raghuvansh/DL/MNIST/data/ubyte/'
         
     def load_data(self,
                   train_images='train-images-idx3-ubyte', 
@@ -38,12 +38,11 @@ class DataLoader(object):
             for j in range(784):
                 image.append(ord(training_images.read(1)))
             
-            images.append(image)
+            images.append(np.reshape(np.array(image), (784,1)))
             labels.append(vectorized_result(ord(training_labels.read(1))))
-            
-        training_data = (np.reshape(np.array(images, dtype=int), (train_count, 784)), 
-                         np.reshape(np.array(labels, dtype=int), (train_count, 10)))
         
+        training_data = list(zip(images, labels))
+                    
         images = []
         labels = []
         for i in range(test_count):
@@ -51,11 +50,10 @@ class DataLoader(object):
             for j in range(784):
                 image.append(ord(testing_images.read(1)))
                 
-            images.append(image)
+            images.append(np.reshape(np.array(image), (784,1)))
             labels.append(ord(testing_labels.read(1)))
             
-        testing_data = (np.reshape(np.array(images, dtype=int), (test_count, 784)), 
-                        np.reshape(np.array(labels, dtype=int), (test_count, 1)))
+        testing_data = list(zip(images, labels))
         
         return (training_data, testing_data)
 

@@ -21,7 +21,7 @@ class Network(object):
     def feedforward(self, x):
         a = x
         zs = []
-        activations = []
+        activations = [x]
         for w,b in zip(self.weights, self.biases):
             z = np.dot(w,a) + b
             zs.append(z)
@@ -29,7 +29,7 @@ class Network(object):
             activations.append(a)
             
         cache = (zs, activations)
-            
+        
         return (a, cache)
     
     def SGD(self, training_data, epochs, mini_batch_size, eta, test_data=None):
@@ -52,7 +52,8 @@ class Network(object):
         nabla_b = [np.zeros(b.shape) for b in self.biases]
         nabla_w = [np.zeros(w.shape) for w in self.weights]
         for x,y in mini_batch:
-            delta_nabla_b, delta_nabla_w = self.backprop(x,y)
+            a, cache = self.feedforward(x)
+            delta_nabla_b, delta_nabla_w = self.backprop(cache, y)
             nabla_b = [nb + dnb for nb, dnb in zip(nabla_b, delta_nabla_b)]
             nabla_w = [nw + dnw for nw, dnw in zip(nabla_w, delta_nabla_w)]
             
@@ -70,15 +71,14 @@ class Network(object):
         nabla_w[-1] = np.dot(delta, activations[-2].T)
         for l in range(2, self.num_layers):
             z = zs[-l]
-            sp = sigmoid_derivative(z)
-            delta = np.dot(self.weights[-l+1].T, delta) * sp
+            delta = np.dot(self.weights[-l+1].T, delta) * sigmoid_derivative(z)
             nabla_b[-l] = delta
             nabla_w[-l] = np.dot(delta, activations[-l-1].T)
             
         return (nabla_b, nabla_w)
         
     def evaluate(self, test_data):
-        test_results = [(np.argmax(self.feedforward(x)), y) for (x,y) in test_data]
+        test_results = [(np.argmax(self.feedforward(x)[0]), y) for (x,y) in test_data]
         return sum(int(x == y) for (x,y) in test_results)
     
     def cost_derivative(self, output_activations, y):
@@ -95,7 +95,7 @@ class Network(object):
     
     def save_network(self):
         matrix = (self.weights, self.biases)
-        pickle_out = open('/home/raghuvansh/Desktop/DL/MNIST/saved_network/network.pickle', 'wb')
+        pickle_out = open('/home/raghuvansh/DL/MNIST/saved_network/network.pickle', 'wb')
         pickle.dump(matrix, pickle_out)
         pickle_out.close()
         
