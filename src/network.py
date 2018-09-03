@@ -85,23 +85,21 @@ class Network(object):
         return (output_activations - y)
     
     def predict(self, x):
-        forward_prop = self.feedforward(x)
-        vectorized_predictions_np = forward_prop[0]
-        predictions = []
-        for prediction in vectorized_predictions_np:
-            predictions.append(prediction.tolist().index(1))
+        vectorized_predictions = [self.feedforward(sample)[0] for sample in x]
+        predictions = [np.argmax(prediction) 
+                        for prediction in vectorized_predictions]
             
         return predictions  
     
-    def save_network(self):
+    def save_network(self, filename):
         matrix = (self.weights, self.biases)
-        pickle_out = open('/home/raghuvansh/DL/MNIST/saved_network/network.pickle', 'wb')
+        pickle_out = open('/home/raghuvansh/DL/MNIST/saved_network/' + filename, 'wb')
         pickle.dump(matrix, pickle_out)
         pickle_out.close()
         
-    def load_network(self):
+    def load_network(self, filename):
         try:
-            pickle_in = open('/home/raghuvansh/Desktop/DL/MNIST/saved_network/network.pickle', 'rb')
+            pickle_in = open('/home/raghuvansh/DL/MNIST/saved_network/' + filename, 'rb')
         except FileNotFoundError:
             print('no saved networks available')
             return
