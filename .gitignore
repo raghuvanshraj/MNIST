@@ -253,4 +253,5 @@ fabric.properties
 
 
 ### User
-/.idea
+/.idea/
+/data/
