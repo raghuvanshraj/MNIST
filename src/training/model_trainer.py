@@ -49,18 +49,18 @@ class ModelTrainer(object):
         for e in range(epochs):
             for x, y in self.train_loader:
                 loss, corrects = self.single_pass(x, y)
-                training_metrics.record(loss, corrects)
+                training_metrics.update(loss, corrects)
 
-            training_metrics.update()
+            training_metrics.record()
             training_metrics.print(e)
 
             if validation:
                 with torch.no_grad():
                     for x, y in self.validation_loader:
                         loss, corrects = self.single_pass(x, y)
-                        validation_metrics.record(loss, corrects)
+                        validation_metrics.update(loss, corrects)
 
-                    validation_metrics.update()
+                    validation_metrics.record()
                     validation_metrics.print(e)
 
         return training_metrics, validation_metrics
@@ -78,4 +78,4 @@ class ModelTrainer(object):
             self.optimizer.step()
 
         preds = torch.argmax(y_pred, 1)
-        return loss.data, torch.sum(preds == y.data).data
+        return loss.item(), torch.sum(preds == y.data).item()

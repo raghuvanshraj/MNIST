@@ -2,13 +2,13 @@ class MetricsRecorder(object):
 
     def __init__(self, name):
         self.name = name
-        self.update_count = 0
+        self.update_count = 0.
         self.running_loss = 0.
         self.running_corrects = 0.
         self.losses = []
         self.accuracies = []
 
-    def record(self, loss: float, accuracy: float):
+    def update(self, loss: float, accuracy: float):
         self.running_loss += loss
         self.running_corrects += accuracy
         self.update_count += 1
@@ -18,7 +18,7 @@ class MetricsRecorder(object):
         self.running_loss = 0.
         self.running_corrects = 0.
 
-    def update(self):
+    def record(self):
         self.losses.append(self.running_loss / self.update_count)
         self.accuracies.append(self.running_corrects / self.update_count)
         self.clear()
