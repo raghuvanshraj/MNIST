@@ -7,8 +7,8 @@ import torch.nn as nn
 import torch.utils.data as data
 from torch.nn.parameter import Parameter
 
-from config import TrainingConfig
-from metrics import MetricsRecorder
+from src.training.config import TrainingConfig
+from src.training.metrics import MetricsRecorder
 
 
 class ModelTrainer(object):
@@ -48,30 +48,34 @@ class ModelTrainer(object):
 
         for e in range(epochs):
             for x, y in self.train_loader:
-                x: torch.Tensor = x.to(self.device)
-                y: torch.Tensor = y.to(self.device)
-
-                y_pred: torch.Tensor = self.model(x)
-                loss = self.criterion(y_pred, y)
-                self.optimizer.zero_grad()
-                loss.backward()
-
-                training_metrics.record(loss.data, torch.sum(y_pred == y.data))
+                loss, corrects = self.single_pass(x, y)
+                training_metrics.record(loss, corrects)
 
             training_metrics.update()
-            training_metrics.print()
-            
+            training_metrics.print(e)
+
             if validation:
-                for x, y in self.validation_loader:
-                    x: torch.Tensor = x.to(self.device)
-                    y: torch.Tensor = y.to(self.device)
+                with torch.no_grad():
+                    for x, y in self.validation_loader:
+                        loss, corrects = self.single_pass(x, y)
+                        validation_metrics.record(loss, corrects)
 
-                    y_pred: torch.Tensor = self.model(x)
-                    loss = self.criterion(y_pred, y)
-
-                    validation_metrics.record(loss.data, torch.sum(y_pred == y.data))
-
-                validation_metrics.update()
-                validation_metrics.print()
+                    validation_metrics.update()
+                    validation_metrics.print(e)
 
         return training_metrics, validation_metrics
+
+    def single_pass(self, x: torch.Tensor, y: torch.Tensor) -> [float, float]:
+        x = x.to(self.device)
+        y = y.to(self.device)
+
+        y_pred: torch.Tensor = self.model(x)
+        loss = self.criterion(y_pred, y)
+
+        if torch.is_grad_enabled():
+            self.optimizer.zero_grad()
+            loss.backward()
+            self.optimizer.step()
+
+        preds = torch.argmax(y_pred, 1)
+        return loss.data, torch.sum(preds == y.data).data

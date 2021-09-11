@@ -11,6 +11,7 @@ class LeNet(nn.Module):
         self.conv1 = nn.Conv2d(1, 20, kernel_size=(5, 5), stride=(1, 1))
         self.conv2 = nn.Conv2d(20, 50, kernel_size=(5, 5), stride=(1, 1))
         self.fc1 = nn.Linear(4 * 4 * 50, 500)
+        self.dropout = nn.Dropout(0.5)
         self.fc2 = nn.Linear(500, 10)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
@@ -22,6 +23,7 @@ class LeNet(nn.Module):
         x = x.view(-1, 4 * 4 * 50)
 
         x = F.relu(self.fc1(x))
+        x = self.dropout(x)
         x = self.fc2(x)
 
         return x
