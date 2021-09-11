@@ -1,6 +1,5 @@
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
 
 
 class LeNet(nn.Module):
@@ -8,21 +7,24 @@ class LeNet(nn.Module):
     def __init__(self):
         super(LeNet, self).__init__()
 
-        self.conv1 = nn.Conv2d(1, 20, kernel_size=(5, 5), stride=(1, 1))
-        self.conv2 = nn.Conv2d(20, 50, kernel_size=(5, 5), stride=(1, 1))
-        self.fc1 = nn.Linear(4 * 4 * 50, 500)
-        self.dropout = nn.Dropout(0.5)
-        self.fc2 = nn.Linear(500, 10)
+        self.conv1 = nn.Conv2d(in_channels=1, out_channels=20, kernel_size=(5, 5), stride=(1, 1))
+        self.conv2 = nn.Conv2d(in_channels=20, out_channels=50, kernel_size=(5, 5), stride=(1, 1))
+        self.fc1 = nn.Linear(in_features=4 * 4 * 50, out_features=500)
+        self.fc2 = nn.Linear(in_features=500, out_features=10)
+
+        self.dropout = nn.Dropout(p=0.5)
+        self.relu = nn.ReLU()
+        self.max_pool2d = nn.MaxPool2d(kernel_size=2, stride=2)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
-        x = F.relu(self.conv1(x))
-        x = F.max_pool2d(x, 2, 2)
-        x = F.relu(self.conv2(x))
-        x = F.max_pool2d(x, 2, 2)
+        x = self.relu(self.conv1(x))
+        x = self.max_pool2d(x)
+        x = self.relu(self.conv2(x))
+        x = self.max_pool2d(x)
 
         x = x.view(-1, 4 * 4 * 50)
 
-        x = F.relu(self.fc1(x))
+        x = self.relu(self.fc1(x))
         x = self.dropout(x)
         x = self.fc2(x)
 
