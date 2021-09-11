@@ -35,4 +35,4 @@ class LeNet(nn.Module):
             x = self.forward(x)
             pred = torch.argmax(x, dim=1)
 
-            return pred.data
+            return pred.item()
