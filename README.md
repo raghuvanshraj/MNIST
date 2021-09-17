@@ -26,7 +26,7 @@ model = LeNet()
 
 ```python
 transform = transforms.Compose([
-    transforms.Resize((28,28)),
+    transforms.Resize((28, 28)),
     transforms.ToTensor(),
     transforms.Normalize((0.5,), (0.5,))
 ])
@@ -79,30 +79,31 @@ training_metrics, testing_metrics = model_trainer.train(10, True)
       return torch.max_pool2d(input, kernel_size, stride, padding, dilation, ceil_mode)
     
 
-    training metrics:   epoch: 0  loss: 0.5660764900470774      accuracy: 84.745              
-    testing metrics:    epoch: 0  loss: 0.17687464848160744     accuracy: 94.9                
-    training metrics:   epoch: 1  loss: 0.149194760688891       accuracy: 95.60166666666667   
-    testing metrics:    epoch: 1  loss: 0.10237489618360997     accuracy: 97.04               
-    training metrics:   epoch: 2  loss: 0.09915908887982368     accuracy: 97.025              
-    testing metrics:    epoch: 2  loss: 0.07482448821887373     accuracy: 97.77               
-    training metrics:   epoch: 3  loss: 0.0767439952896287      accuracy: 97.70166666666667   
-    testing metrics:    epoch: 3  loss: 0.060018064426258205    accuracy: 98.27               
-    training metrics:   epoch: 4  loss: 0.06538150800547252     accuracy: 98.03666666666666   
-    testing metrics:    epoch: 4  loss: 0.05361601756885648     accuracy: 98.43               
-    training metrics:   epoch: 5  loss: 0.05587025833937029     accuracy: 98.27333333333333   
-    testing metrics:    epoch: 5  loss: 0.04519161452539265     accuracy: 98.64               
-    training metrics:   epoch: 6  loss: 0.04881695498013869     accuracy: 98.53166666666667   
-    testing metrics:    epoch: 6  loss: 0.045814448073506354    accuracy: 98.52               
-    training metrics:   epoch: 7  loss: 0.04415119583640868     accuracy: 98.65               
-    testing metrics:    epoch: 7  loss: 0.03866033910308033     accuracy: 98.81               
-    training metrics:   epoch: 8  loss: 0.03902378518444796     accuracy: 98.84               
-    testing metrics:    epoch: 8  loss: 0.03777801387012005     accuracy: 98.72               
-    training metrics:   epoch: 9  loss: 0.03686355788144283     accuracy: 98.91333333333333   
-    testing metrics:    epoch: 9  loss: 0.033952858552802355    accuracy: 98.91               
+    [36mtraining metrics:   epoch: 0            loss: 0.588324301900963       accuracy: 84.21               
+    [33mtesting metrics:    epoch: 0            loss: 0.18643051460385324     accuracy: 94.5                
+    [36mtraining metrics:   epoch: 1            loss: 0.14885117702186107     accuracy: 95.64166666666667   
+    [33mtesting metrics:    epoch: 1            loss: 0.1016111133620143      accuracy: 96.85               
+    [36mtraining metrics:   epoch: 2            loss: 0.09786805480408171     accuracy: 97.13               
+    [33mtesting metrics:    epoch: 2            loss: 0.07525796432979405     accuracy: 97.66               
+    [36mtraining metrics:   epoch: 3            loss: 0.07631667819184562     accuracy: 97.725              
+    [33mtesting metrics:    epoch: 3            loss: 0.062078393250703814    accuracy: 98.06               
+    [36mtraining metrics:   epoch: 4            loss: 0.06373392862578232     accuracy: 98.09166666666667   
+    [33mtesting metrics:    epoch: 4            loss: 0.04973903632722795     accuracy: 98.46               
+    [36mtraining metrics:   epoch: 5            loss: 0.054361451430401456    accuracy: 98.37               
+    [33mtesting metrics:    epoch: 5            loss: 0.04480049651581794     accuracy: 98.6                
+    [36mtraining metrics:   epoch: 6            loss: 0.04776036777611201     accuracy: 98.58166666666666   
+    [33mtesting metrics:    epoch: 6            loss: 0.03931979386834428     accuracy: 98.71               
+    [36mtraining metrics:   epoch: 7            loss: 0.04189798879592369     accuracy: 98.73               
+    [33mtesting metrics:    epoch: 7            loss: 0.03871411559171975     accuracy: 98.73               
+    [36mtraining metrics:   epoch: 8            loss: 0.03902356477182669     accuracy: 98.77666666666667   
+    [33mtesting metrics:    epoch: 8            loss: 0.03641769108595327     accuracy: 98.83               
+    [36mtraining metrics:   epoch: 9            loss: 0.034960786242348454    accuracy: 98.96333333333334   
+    [33mtesting metrics:    epoch: 9            loss: 0.035331167161930355    accuracy: 98.81               
     
 
 
 ```python
+plt.figure(facecolor='white')
 plt.plot(training_metrics.losses, label='training loss')
 plt.plot(testing_metrics.losses, label='testing loss')
 plt.grid()
@@ -112,7 +113,7 @@ plt.legend()
 
 
 
-    <matplotlib.legend.Legend at 0x21f38f44220>
+    <matplotlib.legend.Legend at 0x1fc13e73460>
 
 
 
@@ -124,6 +125,7 @@ plt.legend()
 
 
 ```python
+plt.figure(facecolor='white')
 plt.plot(training_metrics.accuracies, label='training accuracy')
 plt.plot(testing_metrics.accuracies, label='testing accuracy')
 plt.grid()
@@ -133,7 +135,7 @@ plt.legend()
 
 
 
-    <matplotlib.legend.Legend at 0x21f14ba1b20>
+    <matplotlib.legend.Legend at 0x1fc00097ee0>
 
 
 
@@ -149,7 +151,7 @@ import requests
 from PIL import Image, ImageOps
 
 url = 'https://images.homedepot-static.com/productImages/007164ea-d47e-4f66-8d8c-fd9f621984a2/svn/architectural-mailboxes-house-letters-numbers-3585b-5-64_1000.jpg'
-response = requests.get(url, stream = True)
+response = requests.get(url, stream=True)
 img = Image.open(response.raw)
 plt.imshow(img)
 ```
@@ -157,7 +159,7 @@ plt.imshow(img)
 
 
 
-    <matplotlib.image.AxesImage at 0x21f27b61790>
+    <matplotlib.image.AxesImage at 0x1fc10878b80>
 
 
 
@@ -169,26 +171,21 @@ plt.imshow(img)
 
 
 ```python
-img = ImageOps.invert(ImageOps.grayscale(img))
-img = img.convert('1')
-img = transform(img)
+def preprocess(img: Image):
+    img = ImageOps.invert(ImageOps.grayscale(img))
+    img = img.convert('1')
+    
+    return img
 ```
 
 
 ```python
-import torch
-
-device = torch.device('cuda:0')
-images = img.to(device)
-image = images[0].unsqueeze(0).unsqueeze(0)
-output = model.predict(image)
-print(output)
+model_trainer.predict(img, transform, preprocess)
 ```
+
+
+
 
     5
-    
 
 
-```python
-
-```
